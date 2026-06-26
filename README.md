@@ -51,7 +51,7 @@ flowchart LR
 
 ## Dataset
 
-The pipeline was tested using a sales orders CSV with 20 rows across three categories (Electronics, Furniture, Sport) and five regions (North, South, East, West, Mid-east).
+The pipeline was tested using a sales orders CSV with 15 rows across three categories (Electronics, Furniture,) and four regions (North, South, East, West).
 
 **Columns:** `order_id`, `product`, `category`, `region`, `quantity`, `unit_price`, `order_date`, `customer_type`
 
@@ -92,8 +92,6 @@ Two IAM roles are required before creating Lambda and Glue:
 **Glue Crawler role (`GlueCrawlerRole`):**
 - Trusted by: `glue.amazonaws.com`
 - Policies attached: `AWSGlueServiceRole`, `AmazonS3ReadOnlyAccess`
-
-> **Important:** `AWSGlueServiceRole` only grants S3 access to buckets named `aws-glue-*` by default. Attaching `AmazonS3ReadOnlyAccess` is required for Glue to read from a custom-named bucket.
 
 ---
 
@@ -252,33 +250,13 @@ This confirmed the full pipeline loop: **upload a file → Lambda triggers → G
 **Glue Crawler completed but created 0 tables**
 `AWSGlueServiceRole` only grants S3 access to buckets prefixed with `aws-glue-*`. Any custom bucket name is blocked by default. Fixed by attaching `AmazonS3ReadOnlyAccess` to the Glue IAM role.
 
-**Glue table name looks different from the S3 bucket name**
-Glue auto-names tables from the S3 bucket name, converting hyphens to underscores. Bucket `pipeline-raw-data-sales-data` becomes table `pipeline_raw_data_sales_data`.
-
-**QuickSight dataset refresh failed / fields showing as Unknown**
-QuickSight needs explicit permission to access S3. Fixed via: Manage QuickSight → Security and permissions → grant access to both S3 buckets.
-
-**Athena queries fail after adding new data**
-Glue must re-crawl before Athena sees new rows. The S3 trigger handles this automatically — or run the crawler manually if testing outside of an upload.
-
 ---
 
-## AWS Exam Connections (SAA-C03)
-
-This project directly demonstrates several exam concepts:
-- **Event-driven architecture** — S3 event triggers Lambda (decoupled, serverless)
-- **Lambda as glue code** — lightweight trigger that delegates work to Glue
-- **AWS Glue Data Catalog** — centralised metadata store used by Athena
-- **Athena serverless querying** — SQL on S3 with no infrastructure
-- **IAM least-privilege** — separate roles for Lambda and Glue with only required permissions
-- **S3 as a data lake foundation** — raw storage that feeds the entire analytics layer
-
----
 
 ## About the Author
 
 **Rukayat Alarape**
-Data Analyst | Cloud Engineer Learner | Program Officer, University of Ibadan
+Data Analyst | Cloud Engineer | 
 
 - GitHub: [@rukkylatunde2001](https://github.com/rukkylatunde2001)
 - Email: rukkylatunde2001@gmail.com
