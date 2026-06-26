@@ -69,7 +69,7 @@ In the AWS S3 console, created two general-purpose buckets in `us-east-1`:
 
 Both were created with default settings (versioning off, public access blocked).
 
-![S3 Buckets Created](screenshots/buckets.png)
+![S3 Buckets Created](sceenshots/buckets.png)
 
 ---
 
@@ -77,7 +77,7 @@ Both were created with default settings (versioning off, public access blocked).
 
 Uploaded `sale_data.csv` to the `pipeline-raw-data-sales-data` bucket using the S3 console Upload button. This is the raw data the entire pipeline is built on.
 
-![Sales Data Uploaded to S3](screenshots/sales_data%20uploaded.png)
+![Sales Data Uploaded to S3](sceenshots/sales_data%20uploaded.png)
 
 ---
 
@@ -120,7 +120,7 @@ def lambda_handler(event, context):
 
 After pasting the code, clicked **Deploy** to save.
 
-![Lambda Function Deployed](screenshots/lambda_fn.png)
+![Lambda Function Deployed](sceenshots/lambda_fn.png)
 
 ---
 
@@ -148,7 +148,7 @@ In AWS Glue → Crawlers → **Create crawler**:
 - **Target database:** Created a new database named `sales-pipeline-db`
 - **Schedule:** On demand (Lambda triggers it, no schedule needed)
 
-![Glue Crawler Ready](screenshots/crawler.png)
+![Glue Crawler Ready](sceenshots/crawler.png)
 
 ---
 
@@ -160,7 +160,7 @@ After saving the crawler, it was triggered (either via Lambda from the earlier u
 - **Table:** `pipeline_raw_data_sales_data` (auto-named from the S3 bucket name — hyphens become underscores)
 - **Schema:** 8 columns detected automatically from the CSV header row
 
-![Glue Database and Table Created](screenshots/database.png)
+![Glue Database and Table Created](sceenshots/database.png)
 
 ---
 
@@ -175,7 +175,7 @@ Selected database `sales-pipeline-db` and ran queries against the table.
 SELECT * FROM sales_pipeline_db.pipeline_raw_data_sales_data LIMIT 20;
 ```
 
-![Athena — Full Table View](screenshots/Table_in_athena.png)
+![Athena — Full Table View](sceenshots/Table_in_athena.png)
 
 **Revenue by category:**
 ```sql
@@ -186,7 +186,7 @@ GROUP BY category
 ORDER BY revenue DESC;
 ```
 
-![Athena — Query Result](screenshots/query_result.png)
+![Athena — Query Result](sceenshots/query_result.png)
 
 ---
 
@@ -203,13 +203,13 @@ In Amazon QuickSight:
 - X axis: `category`
 - Value: `revenue (Sum)`
 
-![QuickSight — Revenue by Category](screenshots/visual1.png)
+![QuickSight — Revenue by Category](sceenshots/visual1.png)
 
 **Sheet 2 — Pie chart: Count of Orders by Region**
 - Group/Color: `region`
 - Value: `order_id (Count)`
 
-![QuickSight — Orders by Region](screenshots/visual2.png)
+![QuickSight — Orders by Region](sceenshots/visual2.png)
 
 ---
 
@@ -221,7 +221,7 @@ With everything set up, the pipeline was tested by adding new rows of data to th
 
 New rows (sport category products, Mid-east region) were added to the spreadsheet and saved.
 
-![New Data Added to CSV](screenshots/added_data.png)
+![New Data Added to CSV](sceenshots/added_data.png)
 
 ### Upload Triggers the Pipeline
 
@@ -231,15 +231,15 @@ The updated CSV was uploaded to `pipeline-raw-data-sales-data`. The S3 PUT event
 
 Re-running the SELECT query in Athena now returns the additional rows, confirming the pipeline picked up the new records.
 
-![Athena — Updated Data](screenshots/athena_updated_data.png)
+![Athena — Updated Data](sceenshots/athena_updated_data.png)
 
 ### Dashboard Updates Automatically
 
 After refreshing the QuickSight dataset, both charts reflected the new data — the Sport category appeared in the revenue bar chart and Mid-east was added to the region pie chart.
 
-![Updated Dashboard — Revenue by Category](screenshots/added-data%20visual1.png)
+![Updated Dashboard — Revenue by Category](sceenshots/added-data%20visual1.png)
 
-![Updated Dashboard — Orders by Region](screenshots/added-data%20visual2.png)
+![Updated Dashboard — Orders by Region](sceenshots/added-data%20visual2.png)
 
 This confirmed the full pipeline loop: **upload a file → Lambda triggers → Glue crawls → Athena queries → QuickSight dashboard updates.**
 
