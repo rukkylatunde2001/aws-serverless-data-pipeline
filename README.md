@@ -15,16 +15,10 @@ A fully serverless, event-driven data pipeline on AWS. Uploading a CSV file to S
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    A[📄 CSV File] -->|Upload| B[Amazon S3\npipeline-raw-data-sales-data]
-    B -->|S3 PUT Event| C[AWS Lambda\nStartGlueCrawler]
-    C -->|Start Crawler| D[AWS Glue Crawler\nsales-data-crawler]
-    D -->|Writes Schema| E[Glue Data Catalog\nsales-pipeline-db]
-    E -->|SQL Queries| F[Amazon Athena]
-    F -->|Results saved to| G[Amazon S3\npipeline-sales-data-result]
-    F -->|Data source| H[Amazon QuickSight\nDashboard]
-```
+## Architecture
+
+![Architecture Diagram](sceenshots/architecture.png)
+
 
 **Flow summary:**
 - **S3** stores the raw CSV data and Athena query results (two separate buckets)
